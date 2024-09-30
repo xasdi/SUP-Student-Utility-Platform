@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omniawiki</title>
+</head>
+<body>
+    
+    
+        <input id="request" name="request">
+        <button type="button" onclick="search()">Zapytaj</button>
+    <br>
+    <hr><br>
+    <iframe src="" title="result" id="resultiframe" width='1000px' height="500px"></iframe>
+
+</body>
+    <script>
+        function search(){
+            var request = document.getElementById('request').value;
+            var wikireq = 'https://calamitymod.wiki.gg/index.php?search='+request+'&title=Special%3ASearch';
+            document.getElementById('resultiframe').src=wikireq;
+        }
+       
+    </script>
+</html>

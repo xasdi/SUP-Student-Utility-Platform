@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPS</title>
+    <link rel="stylesheet" href="simplegamecss.css">
+    <script src="simplegamejs.js"></script>
+</head>
+<body>
+    <div id="gameend">
+        <span id="gameresults" style="user-select: none;">Well played!</span><br>
+
+        <button onclick="playagain()">Play Again</button>
+    </div>
+    <div id="gamecontainer">
+        <div id="announcement">
+            Choose one of items below: Sword, Rock or Paper.
+        </div>
+        <div id="information">
+            <div id="player">
+
+            </div>
+            <div id="score">
+                <span id="playerscore">0</span> : <span id="computerscore">0</span>
+            </div>
+            <div id="computer">
+    
+            </div>
+            
+        </div>
+        <div id="game">
+            <div id="select">
+                <div id="sword" onclick="sword(), game()" title="Nożyczki"><img src="images/sword.png" style="width: 100px; height: 100px;"></div>
+                <div id="rock" onclick="rock(), game()" title="Kamień"><img src="images/rock.png" style="width: 100px; height: 100px;"></div>
+                <div id="paper" onclick="paper(), game()" title="Papier"><img src="images/paper.png" style="width: 100px; height: 100px;"></div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

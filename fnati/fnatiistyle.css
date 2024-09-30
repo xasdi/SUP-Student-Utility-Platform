@@ -1,0 +1,268 @@
+*{
+    user-select: none;
+}
+body,html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+body{
+    background-color: black;
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#gamehandler{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+#game{
+    height: 720px;
+    width: 1200px;
+    border: 10px solid white;
+}
+
+#backgroundcontainer{
+    height: 720px;
+    width: 1200px;
+    overflow:hidden;
+    background-size: 1600px 720px; 
+    position: relative;
+    
+}
+
+#actionboxes{
+    height: 720px;
+    width: 1600px;
+    position: relative;
+    left: -200px;
+    
+}
+
+#imagebackground{
+    height: 720px;
+    width: 1600px;
+    position: absolute;
+       
+   
+}
+
+#gamehandler{
+    z-index: 100;
+}
+
+#leftscrollbutton{
+    position: absolute;
+    left: 5px;
+    background-size: 40px 300px;
+    background-repeat: no-repeat;
+    transform: rotate(180deg);
+
+}
+
+#rightscrollbutton{
+    position: absolute;
+    right: 5px;
+    background-size: 40px 300px;
+    background-repeat: no-repeat;
+}
+
+.scrollbuttons{
+    background-color: red;
+    top: 0px;
+    width: 40px;
+    height: 720px;
+    opacity: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 1000;
+}
+
+
+
+#freddynose{
+    position: absolute;
+    z-index: 1000;
+    height: 6px;
+    width: 7px;
+    background-color: red;
+    top: 237px;
+    left: 676px;
+    opacity: 0;
+
+}
+
+#fan{
+    padding: 0;
+    margin: 0;
+    height: 196px;
+    width: 137px;
+    position: absolute;
+    top: 303px;
+    left: 780px;
+    opacity: 1;
+    
+}
+
+#leftbuttons{
+    z-index: 50;
+    position: absolute;
+    top: 300px;
+    left: -5px;
+    width: 92px;
+    height: 251px;
+    /* background-image: url("/fnatiimages/buttons/leftbuttonbasic.png"); */
+}
+
+#leftdoorbutton{
+    width: 39px;
+    height: 58px;
+    position: absolute;
+    opacity: 0;
+    background-color: red;
+    top: 349px;
+    left: 23px;
+    z-index: 100;
+    border: 2px solid white;
+    
+}
+
+#leftlightbutton{
+    width: 39px;
+    height: 56px;
+    position: absolute;
+    opacity: 0;
+    background-color: red;
+    top: 429px;
+    left: 23px;
+    z-index: 100;
+    border: 2px solid white;
+    
+}
+
+#leftdoor{
+    width: 223px;
+    height: 720px;
+    position: absolute;
+    z-index: 900;
+    opacity: 1;
+    
+    left: 70px;
+}
+
+#rightbuttons{
+    z-index: 50;
+    position: absolute;
+    top: 300px;
+    right: 20px;
+    width: 92px;
+    height: 251px;
+    /* background-image: url("/fnatiimages/buttons/rightbuttonbasic.png"); */
+}
+
+#rightdoorbutton{
+    width: 39px;
+    height: 58px;
+    position: absolute;
+    opacity: 0;
+    background-color: red;
+    top: 349px;
+    right: 47px;
+    z-index: 100;
+    border: 2px solid white;
+    
+}
+
+#rightlightbutton{
+    width: 39px;
+    height: 56px;
+    position: absolute;
+    opacity: 0;
+    background-color: red;
+    top: 429px;
+    right: 47px;
+    z-index: 100;
+    border: 2px solid white;
+    
+}
+
+#rightdoor{
+    width: 223px;
+    height: 720px;
+    position: absolute;
+    
+    z-index: 900;
+    right: 110px;
+}
+
+#rightdoorimage{
+    width: 223px;
+    height: 720px;
+}
+
+#jumpscaretest{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    opacity: 0;
+    top: 300px;
+    left: 990px;
+}
+
+#jumpscaredisplay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 999;
+    padding: 0;
+    margin: 0;
+    
+   
+}
+
+#jumpscaredisplayimage{
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 99.6%;
+}
+
+#menu{
+    color: white;
+    text-align: center;
+}
+
+#game{
+    display: none;
+}
+
+#loadingbar{
+    width: 300px;
+    height: 10px;
+    background-color: rgb(216, 216, 216) ;
+}
+
+#progress {
+    height: 10px;
+    width: 0px;
+    background: rgb(75, 75, 75);
+    transition: width 5s ease;
+    opacity: 1;
+    z-index: 2;
+}
+
+.nomargin{
+    margin: 0;
+}
+
+#playbutton{
+    visibility: hidden;
+}
+

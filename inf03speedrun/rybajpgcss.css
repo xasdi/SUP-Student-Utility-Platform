@@ -1,0 +1,55 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+#header{
+    display: flex;
+    justify-content: center;
+    align-items:  center;
+    color: white;
+    width: 100%;
+    height: 200px;
+    background-color: #12848e;
+}
+
+#tekst{
+    float: left;
+    height: 400px;
+    width: 50%;
+    background-color: #efefef;
+}
+
+#ryba{
+    display: flex;
+    justify-content: center;
+    align-items:  center;
+    flex-direction: column;
+
+    float: left;
+    background-color: #53b4bd;
+    width: 50%;
+    height: 400px;
+}
+
+#stopy{
+    background-color: #12848e;
+    width: 100%;
+    height: 100px;
+    color: white;
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items:  center;
+    flex-direction: column;
+}
+
+#tekst > table{
+    border-color: #a7c5c5;
+    border-collapse: collapse;
+}
+
+#rybajpg{
+    box-shadow: 5px 5px 5\px dimgray;
+}

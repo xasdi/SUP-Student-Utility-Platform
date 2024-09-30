@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JD Notes</title>
+    <link rel="stylesheet" href="jdnotesstyle.css">
+    
+    
+</head>
+<body onload="load()">
+    <div id="page">
+        <div id="pagetitle"><h1>JD notes</h1><br><button id="pokaoknob">Add New Note</button></div>
+        <dialog id="okno">
+            <h5>Let's Create Your New Note!</h5>
+            <input id="newnotetitle" placeholder="Title" autocomplete="off" maxlength="25" required><br>
+            <textarea id="newnotecontent" placeholder="Note Content" autocomplete="off" required></textarea><br>
+            <button id="dodajnotke">Apply</button>
+            <button id="schowajokno">Close</button>
+        </dialog>
+        <dialog id="okno2">
+            <h1 id="notetitle"></h1>
+            <textarea id="openednotecontent" autocomplete="off"></textarea>
+            <button id="schowajokno2">Close</button>
+
+        </dialog>
+        <div id="noteheadercontainer">
+            
+            
+
+        </div>
+        <div id="futa">Jakub Dąbrowski <button onclick="save()">Save</button><button onclick="check()">check</button><button onclick="load()">load</button><button onclick="reset()">reset</button></div>
+        <div class="storage" id="titlestorage"></div>
+        <div class="storage" id="notestorage"></div>
+        <div class="storage" id="datestorage"></div>
+    </div>
+    <script src="jdnotesjs.js"></script>
+</body>
+</html>

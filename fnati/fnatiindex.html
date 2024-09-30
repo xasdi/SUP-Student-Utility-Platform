@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FNATI</title>
+    <link rel="stylesheet" href="fnatiistyle.css">
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+    <script src="gametick.js"></script>
+    <script src="gameevents.js"></script>
+    <script src="audioengine.js"></script>
+    
+    
+    
+</head>
+<body onload="dotanimationfunction(), progressbarloadin(), loadImage()">
+    <div id="jumpscaredisplay"><img src="" id="jumpscaredisplayimage"></div>
+    <div id="menu">
+        <h1 class="nomargin">FNATI</h1>
+        <h6 class="nomargin">Five Nights At Technik Informatyk</h6>
+        <br>
+        <h6>Loading<span id="dotanimation"></span></h6>
+        <div id="loadingbar"><div id="progress"></div></div>
+        <br>
+        <button onclick="startloops(), startgame()" id="playbutton">GRAJ</button>
+        
+        <br>
+        
+    </div>
+    <div id="gamehandler">
+        <div id="game">
+            <div id="backgroundcontainer">
+                
+                <div id="actionboxes">
+                    <img id="imagebackground" src="fnatiimages/locations/background.jpg">
+                    
+                    
+                    <div id="leftbuttons"><img src="fnatiimages/buttons/leftbuttonbasic.png" id="leftbuttonsimage"></div>
+                    <div id="leftdoorbutton" onclick="leftbuttonhandler()"></div>
+                    <div id="leftlightbutton"></div>
+                    <div id="leftdoor"><img src="fnatiimages/doors/leftdoorbasic.png" id="leftdoorimage"></div>
+
+                    <div id="rightbuttons"><img src="fnatiimages/buttons/rightbuttonbasic.png" id="rightbuttonsimage"></div>
+                    <div id="rightdoorbutton" onclick="rightbuttonhandler()"></div>
+                    <div id="rightlightbutton"></div>
+                    <div id="rightdoor"><img src="fnatiimages/doors/rightdoorbasic.png" id="rightdoorimage"></div>
+                    <div id="jumpscaretest" onclick="jumpscare()"></div>
+
+                    <div id="fan"><img src="animationimages/fan/fan.gif" id="fananimation"></div>
+                    <div id="freddynose" onclick="playfreddynose()"></div>
+                </div>
+                
+                <button class="scrollbuttons"  id="leftscrollbutton" ></button>
+                <button class="scrollbuttons"  id="rightscrollbutton" ></button>
+            </div>
+            
+            
+
+        </div>
+    </div>
+    
+</body>
+</html>

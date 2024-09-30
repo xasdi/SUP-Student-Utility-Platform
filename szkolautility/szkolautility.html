@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Automatyzacja</title>
+</head>
+<body onload="open()">
+    <h1><a href="" id="wynik" style="display: none;">Link Do Planu</a></h1><br>
+    Wybierz klasę:
+    <select id="klasa">
+        <option value="1LOS">1LOS</option>
+        <option value="2LOs">2LOs</option>
+        <option value="2LOi">2LOi</option>
+        <option value="3LOs">3LOs</option>
+        <option value="3LOi">3LOi</option>
+        <option value="4LOs">4LOs</option>
+        <option value="4LOi">4LOi</option>
+        <option value="1TP">1TP</option>
+        <option value="1TM">1TM</option>
+        <option value="1TEL">1TEL</option>
+        <option value="1TG">1TG</option>
+        <option value="1TES">1TES</option>
+        <option value="1TPM">1TPM</option>
+        <option value="1TIO">1TIO</option>
+        <option value="2TI">2TI</option>
+        <option value="2TP">2TP</option>
+        <option value="2TM">2TM</option>
+        <option value="2TO">2TO</option>
+        <option value="2TE">2TE</option>
+        <option value="2TSi">2TSi</option>
+        <option value="2TG">2TG</option>
+        <option value="2TEL">2TEL</option>
+        <option value="2TPM">2TPM</option>
+        <option value="3TM">3TM</option>
+        <option value="3TI">3TI</option>
+        <option value="3TP">3TP</option>
+        <option value="3TE">3TE</option>
+        <option value="3TSi">3TSi</option>
+        <option value="3TG">3TG</option>
+        <option value="3TEL">3TEL</option>
+        <option value="3TOE">3TOE</option>
+        <option value="3TPM">3TPM</option>
+        <option value="4TM">4TM</option>
+        <option value="4TG">4TG</option>
+        <option value="4TI">4TI</option>
+        <option value="4TP">4TP</option>
+        <option value="4TE">4TE</option>
+        <option value="4TEE">4TEE</option>
+        <option value="4TSi">4TSi</option>
+        <option value="4TOP">4TOP</option>
+        <option value="5MT">5MT</option>
+        <option value="5TI">5TI</option>
+        <option value="5TE">5TE</option>
+        <option value="5TS">5TS</option>
+        <option value="5TG">5TG</option>
+        <option value="5TP">5TP</option>
+        <option value="5TEL">5TEL</option>
+        <option value="5OP">5OP</option>
+        <option value="2BSE">2BSE</option>
+        <option value="3BSE">3BSE</option>
+    </select>
+    
+    
+    <p id="status">...</p>
+    <button onclick="save()">Wybierz</button>
+    <button onclick="reset()">Reset</button><br>
+    <iframe src="" height="500px" width="500px" id="iframe"></iframe>
+    <script>
+        const wynik = document.getElementById('wynik');
+        const status = document.getElementById('status');
+        const classNames = ["1LOS", "2LOs", "2LOi", "3LOs", "3LOi", "4LOs", "4LOi", "1TP", "1TM", "1TEL", "1TG", "1TES", "1TPM", "1TIO", "2TI", "2TP", "2TM", "2TO", "2TE", "2TSi", "2TG", "2TEL", "2TPM", "3TM", "3TI", "3TP", "3TE", "3TSi", "3TG", "3TEL", "3TOE", "3TPM", "4TM", "4TG", "4TI", "4TP", "4TE", "4TEE", "4TSi", "4TOP", "5MT", "5TI", "5TE", "5TS", "5TG", "5TP", "5TEL", "5OP", "2BSE", "3BSE"];
+        const numbers = ["o1", "o2", "o3", "o4", "o5", "o6", "o7", "o8", "o9", "o10", "o11", "o12", "o13", "o14", "o15", "o16", "o17", "o18", "o19", "o20", "o21", "o22", "o23", "o24", "o25", "o26", "o27", "o28", "o29", "o30", "o31", "o32", "o33", "o34", "o35", "o36", "o37", "o38", "o39", "o40", "o41", "o42", "o43", "o44", "o45", "o46", "o47", "o48", "o49", "o50"];
+        var input;
+        
+        
+        function save(){
+            var retrieve = localStorage.getItem('klasa');
+           
+            input = document.getElementById('klasa').value;
+            var i = index(input)
+            wynik.href = 'https://zsge.pl/plan/plany/' + numbers[i] + '.html';
+           
+            localStorage.setItem('klasa', input);
+            location.reload();
+        }
+        
+        function reset(){
+            localStorage.setItem('klasa', 'undefined');
+            console.log(localStorage.getItem('klasa'))
+            location.reload();
+        }
+
+        function index(word){
+            return classNames.indexOf(word);
+        }
+
+        function open(){
+            
+            
+            var retrieve = localStorage.getItem('klasa');
+            var i = index(retrieve)
+            
+            console.log(retrieve)
+            if(retrieve == 'undefined'){
+                status.innerHTML = 'Ustaw klasę'
+                document.getElementById('iframe').style.display = 'none';
+            }else{
+                wynik.href = 'https://zsge.pl/plan/plany/' + numbers[i] + '.html';
+                status.innerHTML = 'Twoja klasa to: ' + retrieve;
+                document.getElementById('iframe').src = wynik.href;
+                document.getElementById('iframe').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

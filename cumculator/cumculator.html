@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator</title>
+    <link rel="stylesheet" href="cumculatorstyle.css">
+    <script>
+        function dzialanie() {
+            y = x;
+            x = 0;
+        }
+
+        
+
+        function wynik() {
+            if(a == 1){
+                document.getElementById('display').value = y + x;
+            }
+            if(b == 1){
+                document.getElementById('display').value = y - x;
+            }
+            if(c == 1){
+                document.getElementById('display').value = y * x;
+            }
+            if(d== 1){
+                document.getElementById('display').value = y / x;
+            }
+            a = 0;
+            b = 0;
+            c = 0;
+            d = 0;
+
+
+        }
+
+        function wipe() {
+            x = 0; 
+            y = 0;
+            document.getElementById('display').value = 0;
+            a = 0;
+            b = 0;
+            c = 0;
+            d = 0;
+            
+        }
+
+        document.addEventListener('keydown', (event) => {
+            var name = event.key;
+            var code = event.code;
+
+
+            if(code == "ArrowUp") {
+                v += "1";
+            }
+            if(code == "ArrowDown") {
+                v += "3";
+            }
+            if(code == "ArrowLeft") {
+                v += "2";
+            }
+            if(code == "ArrowRight") {
+                v += "4";
+            }
+            if(code == "KeyB") {
+                v += "5";
+            }
+            if(code == "KeyA") {
+                v += "6";
+            }
+            if(code == "Enter") {
+                v += "7";
+            }
+            if(code == "KeyR"){
+                v = 0;
+
+            }
+
+        })
+
+        async function check(){
+            s = 1;
+            
+            while(s == 1){
+                if(v == "011332424567"){
+                    document.getElementById('rick').style.display = "inline";
+                    document.getElementById('debugbutton').style.display = "inline";
+                } else {
+                    document.getElementById('rick').style.display = "none";
+                }
+                
+                await sleep(500)
+            }
+        }
+        
+        const sleep = (ms) => {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+         };
+
+        function display() {
+            document.getElementById('controlldisplay').innerHTML = "X=" + x + " " + "Y=" + y + " " + "V=" + v + "";
+        }
+
+    </script>
+</head>
+<body onload="a = 0, b = 0, c = 0, d = 0, x = 0, y = 0, v = 0, check()">
+    <h1>Prosty kalkulator. Obsługuje tylko liczby od 0-9.</h1>
+    <div id="calculator">
+        <input type="text" id="display" readonly value="0">
+        <div id="numbers">
+            <div class="number" onclick="x = 1, document.getElementById('display').value = x;">1</div>
+            <div class="number" onclick="x = 2, document.getElementById('display').value = x;">2</div>
+            <div class="number" onclick="x = 3, document.getElementById('display').value = x;">3</div>
+            <div class="number" onclick="x = 4, document.getElementById('display').value = x;">4</div>
+            <div class="number" onclick="x = 5, document.getElementById('display').value = x;">5</div>
+            <div class="number" onclick="x = 6, document.getElementById('display').value = x;">6</div>
+            <div class="number" onclick="x = 7, document.getElementById('display').value = x;">7</div>
+            <div class="number" onclick="x = 8, document.getElementById('display').value = x;">8</div>
+            <div class="number" onclick="x = 9, document.getElementById('display').value = x;">9</div>
+            <div id="number0" onclick="x = 0 , document.getElementById('display').value = x;">0</div>
+        </div>
+        <div id="controlldisplay"></div>
+  
+        <button onclick="display()" id="debugbutton" style="display: none;">Wyświetl zawartość zmiennych</button>
+
+        <button onclick="a = 1, dzialanie()">+</button>
+        <button onclick="b = 1, dzialanie()">-</button>
+        <button onclick="c = 1, dzialanie()">*</button>
+        <button onclick="d = 1, dzialanie()">/</button>
+        <button onclick="wynik()">=</button>
+        <button onclick="wipe()">DEL</button>
+        <br>
+        <a id="rick" style="display: none; font-size: 150px; text-decoration: none;" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley">GRATULACJE</a>
+        <br><hr>
+        &uarr; &uarr;&darr;&darr;&larr;&rarr;&larr;&rarr;B A ENTER<br>
+        Naciśnij R aby zresetować sekwencję klawiszy
+        
+        <script>
+
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+body, html{
+    user-select: none;
+}
+
+#numbers{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    background-color: azure;
+    width: 150px;
+    position: relative;
+    left: 10px;
+    
+}
+
+.number{
+    margin-top: 10px;
+    background-color:aqua ;
+    width: 50px;
+    text-align: center;
+    
+
+}
+
+#number0{
+    margin-top: 10px;
+    background-color: aqua;
+    text-align: center;
+    position: relative;
+    left: 50px;
+    width: 50px;
+
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess The Color</title>
+    <link rel="stylesheet" href="guessthecolorstyle.css">
+    <script src="guessthecolorscript.js"></script>
+</head>
+<body onload="generatecolors(), colorrotation()">
+    <div id="maincontainer">
+        <div id="logo">
+            <p id="actuallogo">Guess The Color!</p>
+        </div>
+        <div id="displaycolorvalue">
+            
+            <button onclick="generatecolors()">Generate Random RGB Color</button>
+            <p>Your RGB Values Are: <span id="actualdisplay"></span>.</p>
+            <p>You won <span id="wincounter">0</span> times in a row.</p>
+            <p><b>HOW TO PLAY</b>: Read generated rgb number, then choose matching color from palette below.</p>
+        
+        </div>
+        <div id="colorgrid">
+            <div class="grid-item" id="color1" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color2" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color3" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color4" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color5" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color6" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color7" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color8" onClick="reply_click(this.id)"></div>
+            <div class="grid-item" id="color9" onClick="reply_click(this.id)"></div>
+        </div>
+        <div id="footer"></div>
+    </div>
+</body>
+</html>

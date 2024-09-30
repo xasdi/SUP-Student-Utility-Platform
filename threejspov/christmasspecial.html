@@ -1,0 +1,326 @@
+<style>
+    body {
+      margin: 0;
+    }
+  </style>
+  
+  <script
+    async
+    src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
+  ></script>
+
+  <body onload="info()">
+    <dialog id="controlsinfo">
+        Controlls: <Br>
+        W,A,S,D<br>
+        Arrow: Left, Right<br>
+        <button onclick="infox()">Close</button>
+
+        <dialog id="oldwiseinfo">
+            <br>You found old wise tree!!1one!</br>
+            <button onclick="infojumpscarx()">Close</button>
+    </dialog>
+
+</body>
+
+    <script>
+        var dialog = document.getElementById("controlsinfo");
+        
+    function info(){
+        dialog.showModal();
+    }
+    function infox(){
+        dialog.close();
+    }
+    
+    </script>
+  
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+      }
+    }
+  </script>
+  
+  <script type="module">
+    import * as THREE from 'three'
+    //import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+  
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    )
+  
+    const renderer = new THREE.WebGLRenderer()
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+  
+    //const controls = new OrbitControls(camera, renderer.domElement)
+  
+    const textureloader = new THREE.TextureLoader();
+    const texture1 = textureloader.load('soil.jpeg');
+    const pinetree = textureloader.load('tree.jpg');
+    const oldwisetreetexture = textureloader.load('oldwisetree.png');
+
+    texture1.wrapS = THREE.RepeatWrapping; // Powtarzanie tekstury w kierunku S (szerokość)
+    texture1.wrapT = THREE.RepeatWrapping; // Powtarzanie tekstury w kierunku T (wysokość)
+    texture1.repeat.set(1000, 1000);
+
+
+    var planegeometry = new THREE.PlaneGeometry(500, 500); // Rozmiary prostokąta
+    var planematerial = new THREE.MeshBasicMaterial({ map: texture1 }); // Materiał
+    var plane = new THREE.Mesh(planegeometry, planematerial); // Tworzenie meshu z geometrią i materiałem
+    plane.rotation.x = Math.PI / -2; // Obrót płaszczyzny o 90 stopni wokół osi X
+    scene.add(plane);
+
+
+    var treegeometry = new THREE.PlaneGeometry(1,4);
+    var treematerial = new THREE.MeshBasicMaterial({ map: pinetree, side: THREE.DoubleSide });
+    var tree = new THREE.Mesh(treegeometry, treematerial);
+   
+
+    
+    var tree1 = new THREE.Mesh(treegeometry, treematerial);
+    tree1.rotation.y = Math.PI / -2; // Obrót o 90
+    
+
+    const group = new THREE.Group();
+    group.add(tree);
+    group.add(tree1);
+
+    var oldwisetreegeometry = new THREE.PlaneGeometry(30,100);
+    var oldwisetreematerial = new THREE.MeshBasicMaterial({ map: oldwisetreetexture, side: THREE.DoubleSide });
+    var oldwisetree = new THREE.Mesh(oldwisetreegeometry, oldwisetreematerial);
+   
+
+    
+    var oldwisetree1 = new THREE.Mesh(oldwisetreegeometry, oldwisetreematerial);
+    oldwisetree1.rotation.y = Math.PI / -2; // Obrót o 90
+    
+
+    const oldwisetreeobject = new THREE.Group();
+    oldwisetreeobject.add(oldwisetree);
+    oldwisetreeobject.add(oldwisetree1);
+
+    const oldwiserandomX = Math.random() * 250 - 125; // Losowa pozycja X
+    const oldwiserandomZ = Math.random() * 250 - 125; // Losowa pozycja Z
+    oldwisetreeobject.position.set(oldwiserandomX, 30, oldwiserandomZ); // Ustawienie pozycji dla grupy drzewa
+    scene.add(oldwisetreeobject);
+
+    
+    
+
+    var numberOfTrees = 5000; // Liczba drzew w lesie
+    const trees = [];
+for (let i = 0; i < numberOfTrees; i++) {
+   
+
+    const treeGroup = new THREE.Group(); // Nowa grupa dla każdego drzewa
+
+    const randomX = Math.random() * 250 - 125; // Losowa pozycja X
+    const randomZ = Math.random() * 250 - 125; // Losowa pozycja Z
+    treeGroup.position.set(randomX, 2, randomZ); // Ustawienie pozycji dla grupy drzewa
+
+    const tree = new THREE.Mesh(treegeometry, treematerial);
+    const tree1 = new THREE.Mesh(treegeometry, treematerial);
+    tree1.rotation.y = Math.PI / -2;
+
+    treeGroup.add(tree);
+    treeGroup.add(tree1);
+    
+
+    scene.add(treeGroup); // Dodanie grupy drzewa do sceny
+    
+
+    trees.push({
+        mesh: treeGroup,
+        inScene: true
+    })
+}
+
+    camera.position.set(0, 1, 0); // Ustawienie pozycji na wysokości 1 jednostki nad płaszczyzną
+    camera.lookAt(new THREE.Vector3(0, 1, -1)); // Patrzy w kierunku przodu sceny
+    
+    // Definicja zmiennych do poruszania kamerą
+    let moveForward = false;
+    let moveBackward = false;
+    let moveLeft = false;
+    let moveRight = false;
+    
+    let movevalue = 0.1;
+    // Obsługa zdarzeń klawiatury
+    function onKeyDown(event) {
+        switch (event.code) {
+            case 'KeyW':
+                moveForward = true;
+                break;
+            case 'KeyS':
+                moveBackward = true;
+                break;
+            case 'KeyA':
+                moveLeft = true;
+                break;
+            case 'KeyD':
+                moveRight = true;
+                break;
+            case 'ShiftLeft':
+                movevalue = 0.2;
+                break;    
+        }
+    }
+
+    function onKeyUp(event) {
+        switch (event.code) {
+            case 'KeyW':
+                moveForward = false;
+                break;
+            case 'KeyS':
+                moveBackward = false;
+                break;
+            case 'KeyA':
+                moveLeft = false;
+                break;
+            case 'KeyD':
+                moveRight = false;
+                break;
+            case 'ShiftLeft':
+                movevalue = 0.1;
+                break; 
+        }
+    }
+
+    // Dodanie nasłuchiwania zdarzeń klawiatury
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+
+// Funkcja obsługująca poruszanie kamerą w kierunku, w którym patrzy
+
+function moveCamera() {
+    const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
+
+    if (moveForward) {
+        camera.position.add(cameraDirection.multiplyScalar(movevalue)); // Poruszanie do przodu
+    }
+    if (moveBackward) {
+        camera.position.sub(cameraDirection.multiplyScalar(movevalue)); // Poruszanie do tyłu
+    }
+    if (moveLeft) {
+        const cameraLeft = new THREE.Vector3();
+        cameraLeft.crossVectors(camera.up, cameraDirection);
+        cameraLeft.normalize();
+        camera.position.sub(cameraLeft.multiplyScalar(-movevalue)); // Poruszanie w lewo
+    }
+    if (moveRight) {
+        const cameraRight = new THREE.Vector3();
+        cameraRight.crossVectors(cameraDirection, camera.up);
+        cameraRight.normalize();
+        camera.position.add(cameraRight.multiplyScalar(movevalue)); // Poruszanie w prawo
+    }
+    
+}
+
+    
+
+
+
+        // Definicja zmiennych do poruszania kamerą na boki
+    let moveLeftward = false;
+    let moveRightward = false;
+
+    // Obsługa zdarzeń klawiatury dla strzałek w lewo i prawo
+    function onArrowKeyDown(event) {
+        switch (event.code) {
+            case 'ArrowLeft':
+                moveLeftward = true;
+                break;
+            case 'ArrowRight':
+                moveRightward = true;
+                break;  
+        }
+    }
+
+    function onArrowKeyUp(event) {
+        switch (event.code) {
+            case 'ArrowLeft':
+                moveLeftward = false;
+                break;
+            case 'ArrowRight':
+                moveRightward = false;
+                break;
+        }
+    }
+
+    // Dodanie nasłuchiwania zdarzeń dla strzałek klawiatury
+    document.addEventListener('keydown', onArrowKeyDown);
+    document.addEventListener('keyup', onArrowKeyUp);
+
+    // Funkcja obsługująca poruszanie kamerą na boki
+    function moveCameraSideways() {
+        if (moveLeftward) {
+            camera.rotation.y += 0.03; // Obrót kamery w lewo
+        }
+        if (moveRightward) {
+            camera.rotation.y -= 0.03; // Obrót kamery w prawo
+        }
+    }
+
+    const minDistanceToShowDialog = 30; // Minimalna odległość, aby wyświetlić dialog
+const raycaster = new THREE.Raycaster(); // Obiekt do wykrywania kolizji
+const closestPoint = new THREE.Vector3(); // Wektor przechowujący najbliższy punkt kolizji
+
+/*function checkDistanceToOldWiseTree() {
+    // Obliczanie wektora od kamery do obiektu oldwisetreeobject
+    const distance = camera.position.distanceTo(oldwisetreeobject.position);
+    console.log(distance);
+    // Jeśli kamera jest wystarczająco blisko obiektu, wyświetl okno dialogowe
+    if (distance < minDistanceToShowDialog) {
+        //dialog.showModal();
+        
+        
+   
+   
+    } else {
+        //dialog.close();
+        
+    }
+}*/
+  
+    function animate() {
+         
+      requestAnimationFrame(animate)
+      moveCamera();
+      moveCameraSideways();
+      raycaster.set(camera.position, camera.getWorldDirection(new THREE.Vector3()));
+
+    // Wykrycie najbliższego punktu kolizji z obiektem oldwisetreeobject
+    const intersects = raycaster.intersectObject(oldwisetreeobject, true);
+    if (intersects.length > 0) {
+        closestPoint.copy(intersects[0].point);
+    }
+
+    //checkDistanceToOldWiseTree();
+      renderer.render(scene, camera)
+      
+    }
+    animate()
+  </script>
+  <script>
+    const crosshair = document.createElement('div');
+crosshair.textContent = '+';
+crosshair.style.position = 'fixed';
+crosshair.style.top = '50%';
+crosshair.style.left = '50%';
+crosshair.style.fontSize = '40px';
+crosshair.style.fontWeight = "Bold";
+crosshair.style.transform = 'translate(-50%, -50%)';
+crosshair.style.zIndex = '9999';
+crosshair.style.color = 'red';
+
+// Dodanie do struktury HTML
+document.body.appendChild(crosshair);
+  </script>

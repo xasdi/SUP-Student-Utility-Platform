@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}  # Optional
-          local-dir: ./ # Adjust if your files are in a subdirectory
+          local-dir: /htdocs # Adjust if your files are in a subdirectory
           remote-dir: ${{ secrets.REMOTE_DIR }}
           protocol: ftps  # Change to ftp if you're not using FTPS
           debug: true  # Enable debug mode

@@ -150,13 +150,14 @@ const upload = multer({ dest: 'uploads/' }); // Pliki będą tymczasowo zapisywa
 app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
     
     const file = req.file;
+    const owner = req.session.user.username;
 
     // Odczyt pliku z systemu plików
     const fileData = fs.readFileSync(file.path);
 
     // Zapytanie do bazy danych, które zapisze plik jako BLOB
-    const sql = 'INSERT INTO files (filename, file_data) VALUES (?, ?)';
-    db.query(sql, [file.originalname, fileData], (err, result) => {
+    const sql = 'INSERT INTO files (filename, file_data, file_owner) VALUES (?, ?, ?)';
+    db.query(sql, [file.originalname, fileData, owner], (err, result) => {
         if (err) throw err;
 
         // Usunięcie pliku z katalogu 'uploads' po zapisaniu go w bazie
@@ -166,6 +167,21 @@ app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
     });
 });
 
+app.get('/getfiles', (req, res) => {
+    const fileowner = req.session.user.username;
+    const sql = 'SELECT id, filename FROM files WHERE file_owner = ?';
+    db.query(sql, [fileowner], (err, result) => {
+        if (err) throw err;
+
+        if (result.length === 0) {
+            return res.status(404).send('No files found');
+        }
+
+       
+        res.json(result);
+        
+    });
+})
 
 
 // Pobieranie pliku z bazy danych

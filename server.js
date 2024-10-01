@@ -12,10 +12,6 @@ const app = express();
 // Middleware do obsługi POST requestów
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// Serwowanie plików statycznych (HTML)
-app.use(express.static('public'));
-
 // Konfiguracja sesji
 app.use(session({
     secret: 'mysecret',
@@ -23,6 +19,53 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false }  // secure: true dla HTTPS
 }));
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    const sql = 'SELECT * FROM users WHERE username = ?';
+    db.query(sql, [username], (err, result) => {
+        if (err) throw err;
+
+        if (result.length === 0) {
+            return res.status(400).send('User not found');
+        }
+
+        const user = result[0];
+
+        bcrypt.compare(password, user.password, (err, isMatch) => {
+            if (err) throw err;
+
+            if (isMatch) {
+                console.log('nie przeszlo')
+                req.session.user = { id: user.id, username: user.username };
+                res.redirect('/dashboard.html');
+            } else {
+                res.status(400).send('Incorrect password');
+            }
+        });
+    });
+});
+
+// Middleware sprawdzający, czy użytkownik jest zalogowany
+const isAuthenticated = (req, res, next) => {
+    console.log(req.path);
+    console.log(req.session.user);
+    if (req.session.user) {
+        next();
+    } else {
+        console.log('nie wpuscilo')
+        res.redirect('/login.html'); // Przekierowanie na stronę logowania, jeśli niezalogowany
+    }
+};
+
+// Serwowanie plików statycznych (HTML)
+app.use(express.static('public'));
+app.use(isAuthenticated, express.static('logedin'));
+
+
+
+
 
 // Konfiguracja połączenia z bazą danych MySQL
 const db = mysql.createConnection({
@@ -70,8 +113,9 @@ app.post('/login', (req, res) => {
             if (err) throw err;
 
             if (isMatch) {
+                console.log('nie przeszlo')
                 req.session.user = { id: user.id, username: user.username };
-                res.redirect('/dashboard');
+                res.redirect('/dashboard.html');
             } else {
                 res.status(400).send('Incorrect password');
             }
@@ -79,23 +123,10 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Middleware sprawdzający, czy użytkownik jest zalogowany
-const isAuthenticated = (req, res, next) => {
-    if (req.session.user) {
-        next();
-    } else {
-        res.redirect('/login.html'); // Przekierowanie na stronę logowania, jeśli niezalogowany
-    }
-};
+
 
 // Ochroniona trasa (dashboard)
-app.get('/dashboard', isAuthenticated, (req, res) => {
-    res.send(`<h1>Welcome ${req.session.user.username}, you are logged in!</h1>
-              <a href="/logout">Logout</a>
-              <a href="/dashboard">Dashboard</a>
-              <a href="/mvtoupload">Prześlij</a>
-              `);
-});
+
 
 // Wylogowanie użytkownika
 app.get('/logout', (req, res) => {
@@ -110,12 +141,9 @@ app.get('/logout', (req, res) => {
 // Konfiguracja multer do przesyłania plików
 const upload = multer({ dest: 'uploads/' }); // Pliki będą tymczasowo zapisywane w katalogu 'uploads/'
 
-app.get('/mvtoupload', isAuthenticated, (req, res) => {
-    res.redirect(path.join(__dirname, 'public', 'upload.html'));
-})
-app.get('/upload.html', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'upload.html'));
-});
+
+
+
 
 
 // Upload pliku i zapis do bazy danych

@@ -23,4 +23,3 @@ jobs:
           local-dir: ./ # Adjust if your files are in a subdirectory
           server-dir: ${{ secrets.REMOTE_DIR }}
           protocol: ftps  # Change to ftp if you're not using FTPS
-          debug: true  # Enable debug mode

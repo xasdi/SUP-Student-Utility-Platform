@@ -3,6 +3,9 @@ const session = require('express-session');
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 
@@ -88,7 +91,10 @@ const isAuthenticated = (req, res, next) => {
 // Ochroniona trasa (dashboard)
 app.get('/dashboard', isAuthenticated, (req, res) => {
     res.send(`<h1>Welcome ${req.session.user.username}, you are logged in!</h1>
-              <a href="/logout">Logout</a>`);
+              <a href="/logout">Logout</a>
+              <a href="/dashboard">Dashboard</a>
+              <a href="/mvtoupload">Prześlij</a>
+              `);
 });
 
 // Wylogowanie użytkownika
@@ -98,6 +104,61 @@ app.get('/logout', (req, res) => {
             return res.status(500).send('Error during logout');
         }
         res.redirect('/login.html');
+    });
+});
+
+// Konfiguracja multer do przesyłania plików
+const upload = multer({ dest: 'uploads/' }); // Pliki będą tymczasowo zapisywane w katalogu 'uploads/'
+
+app.get('/mvtoupload', isAuthenticated, (req, res) => {
+    res.redirect(path.join(__dirname, 'public', 'upload.html'));
+})
+app.get('/upload.html', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'upload.html'));
+});
+
+
+// Upload pliku i zapis do bazy danych
+app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
+    
+    const file = req.file;
+
+    // Odczyt pliku z systemu plików
+    const fileData = fs.readFileSync(file.path);
+
+    // Zapytanie do bazy danych, które zapisze plik jako BLOB
+    const sql = 'INSERT INTO files (filename, file_data) VALUES (?, ?)';
+    db.query(sql, [file.originalname, fileData], (err, result) => {
+        if (err) throw err;
+
+        // Usunięcie pliku z katalogu 'uploads' po zapisaniu go w bazie
+        fs.unlinkSync(file.path);
+
+        res.send('File uploaded and stored in database.');
+    });
+});
+
+
+
+// Pobieranie pliku z bazy danych
+app.get('/download/:id', (req, res) => {
+    const fileId = req.params.id;
+
+    // Pobranie pliku z bazy danych
+    const sql = 'SELECT filename, file_data FROM files WHERE id = ?';
+    db.query(sql, [fileId], (err, result) => {
+        if (err) throw err;
+
+        if (result.length === 0) {
+            return res.status(404).send('File not found');
+        }
+
+        const file = result[0];
+
+        // Ustawienie nagłówków i wysłanie pliku
+        res.setHeader('Content-Disposition', `attachment; filename=${file.filename}`);
+        res.setHeader('Content-Type', 'application/octet-stream');
+        res.send(file.file_data);
     });
 });
 

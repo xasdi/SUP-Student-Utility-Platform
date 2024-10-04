@@ -20,6 +20,22 @@ app.use(session({
     cookie: { secure: false }  // secure: true dla HTTPS
 }));
 
+// Rejestracja użytkownika
+app.post('/register', (req, res) => {
+    console.log('/register dziala');
+    const { username, password } = req.body;
+
+    bcrypt.hash(password, 10, (err, hash) => {
+        if (err) throw err;
+        
+        const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
+        db.query(sql, [username, hash], (err, result) => {
+            if (err) throw err;
+            res.redirect('/login.html'); // Po rejestracji przekierowujemy do logowania
+        });
+    });
+});
+
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
@@ -37,7 +53,7 @@ app.post('/login', (req, res) => {
             if (err) throw err;
 
             if (isMatch) {
-                console.log('nie przeszlo')
+               
                 req.session.user = { id: user.id, username: user.username };
                 res.redirect('/dashboard.html');
             } else {
@@ -49,12 +65,11 @@ app.post('/login', (req, res) => {
 
 // Middleware sprawdzający, czy użytkownik jest zalogowany
 const isAuthenticated = (req, res, next) => {
-    console.log(req.path);
-    console.log(req.session.user);
+   
     if (req.session.user) {
         next();
     } else {
-        console.log('nie wpuscilo')
+       
         res.redirect('/login.html'); // Przekierowanie na stronę logowania, jeśli niezalogowany
     }
 };
@@ -80,52 +95,11 @@ db.connect((err) => {
     console.log('Connected to MySQL');
 });
 
-// Rejestracja użytkownika
-app.post('/register', (req, res) => {
-    const { username, password } = req.body;
-
-    bcrypt.hash(password, 10, (err, hash) => {
-        if (err) throw err;
-
-        const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        db.query(sql, [username, hash], (err, result) => {
-            if (err) throw err;
-            res.redirect('/login.html'); // Po rejestracji przekierowujemy do logowania
-        });
-    });
-});
-
-// Logowanie użytkownika
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    const sql = 'SELECT * FROM users WHERE username = ?';
-    db.query(sql, [username], (err, result) => {
-        if (err) throw err;
-
-        if (result.length === 0) {
-            return res.status(400).send('User not found');
-        }
-
-        const user = result[0];
-
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) throw err;
-
-            if (isMatch) {
-                console.log('nie przeszlo')
-                req.session.user = { id: user.id, username: user.username };
-                res.redirect('/dashboard.html');
-            } else {
-                res.status(400).send('Incorrect password');
-            }
-        });
-    });
-});
 
 
 
-// Ochroniona trasa (dashboard)
+
+
 
 
 // Wylogowanie użytkownika

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
 </head>
-<body>
+<body onload="getdata()">
     <h1>Upload a File</h1>
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <label for="file">Choose file:</label><br>
@@ -13,17 +13,80 @@
         <button type="submit">Upload</button>
         
     </form></br></br>
-    <a href="/getfiles">Pokaz Zapisane Pliki</a>
+    <button onclick="getdata()">Zasys</button>
     <br>
     Twoje zapisane pliki: <br>
     <p name="storedfilestable">...</p>
+    <table id="fileTable">
+        <tbody></tbody>
+    </table>
     
 
 </body>
 <script>
     async function getdata() {
 
+        let responseuserfiledata = await fetch("/getfiles", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        console.log(responseuserfiledata);
+        responseuserfiledata = await responseuserfiledata.json()
         
+            console.log(responseuserfiledata);
+        function populateTable(responseuserfiledata) {
+            const tableBody = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+
+            responseuserfiledata.forEach(item => {
+                const row = document.createElement('tr');
+
+                // Komórka ID
+                const idCell = document.createElement('td');
+                idCell.textContent = item.id;
+                row.appendChild(idCell);
+
+                // Komórka Filename
+                const filenameCell = document.createElement('td');
+                filenameCell.textContent = item.filename;
+                row.appendChild(filenameCell);
+
+                // Komórka Download button
+                const downloadCell = document.createElement('td');
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = 'Download';
+                downloadButton.onclick = () => {
+                    window.location.href = `/download/${item.id}`;
+                };
+
+                // Komórka Download button
+                const deleteCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete File';
+                deleteButton.onclick = () => {
+                    //req do endpoint /delete aby usunął dany plik
+                    window.location.href = `/delete/${item.id}`;
+                   
+                };
+
+
+
+
+
+                downloadCell.appendChild(downloadButton);
+                row.appendChild(downloadCell);
+                deleteCell.appendChild(deleteButton);
+                row.appendChild(deleteCell)
+
+                tableBody.appendChild(row);
+                
+            });
+        }
+
+        // Wywołanie funkcji
+        populateTable(responseuserfiledata);
         
     }
 </script>

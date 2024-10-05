@@ -141,7 +141,9 @@ app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
     });
 });
 
-app.get('/getfiles', (req, res) => {
+
+
+app.get('/getfiles', isAuthenticated, (req, res) => {
     const fileowner = req.session.user.username;
     const sql = 'SELECT id, filename FROM files WHERE file_owner = ?';
     db.query(sql, [fileowner], (err, result) => {
@@ -158,8 +160,9 @@ app.get('/getfiles', (req, res) => {
 })
 
 
+
 // Pobieranie pliku z bazy danych
-app.get('/download/:id', (req, res) => {
+app.get('/download/:id', isAuthenticated, (req, res) => {
     const fileId = req.params.id;
 
     // Pobranie pliku z bazy danych
@@ -177,6 +180,26 @@ app.get('/download/:id', (req, res) => {
         res.setHeader('Content-Disposition', `attachment; filename=${file.filename}`);
         res.setHeader('Content-Type', 'application/octet-stream');
         res.send(file.file_data);
+    });
+});
+
+
+
+app.get('/delete/:id', isAuthenticated , (req, res) => {
+    const deletefileId = req.params.id;
+    const owner = req.session.user.username;
+
+    // Pobranie pliku z bazy danych
+    const sql = 'DELETE FROM files WHERE id = ? AND file_owner = ?';
+    db.query(sql, [deletefileId, owner], (err, result) => {
+        if (err) throw err;
+
+        if (result.length === 0) {
+            return res.status(404).send('File not found');
+        }
+
+        res.send('usunieto plik xd')
+        
     });
 });
 

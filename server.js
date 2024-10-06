@@ -42,8 +42,7 @@ app.post('/doesuserexist', (req, res) => {
 
 // Rejestracja użytkownika
 app.post('/register', (req, res) => {
-    console.log('/register dziala');
-    const { username, password } = req.body;
+    const { username, password } = req.body; //zdefiniuj 2 zmienne i ustaw ich wartości na dane przekazane w pliku json
     
     const sql = 'SELECT * FROM users WHERE username = ?';
     db.query(sql, [username], (err, result) => {

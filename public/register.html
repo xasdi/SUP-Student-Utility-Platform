@@ -9,20 +9,26 @@
     <h1>Register</h1>
     <form action="/register" method="POST">
         <label for="username" id="usernamelabel">Username:</label><br>
-        <input type="text" id="username" name="username" onblur="checkifuserexists()" autocomplete="off" required><label id="usernamestatuslabel"></label><br>
+        <input type="text" id="username" name="username" onblur="checkifuserexists(), disablebutton()" autocomplete="off" required><label id="usernamestatuslabel"></label><br>
         <label for="password"  id="passwd1label" >Password:</label><br>
-        <input type="password"  id="password" name="password" onblur="checkifpasswordsmatching()" required><button type="button" id="showpasswd1" onclick="showpasswd(1)">Show</button><br>
+        <input type="password"  id="password" name="password" onblur="checkifpasswordsmatching(), disablebutton()" required><button type="button" id="showpasswd1" onclick="showpasswd(1)">Show</button><br>
         <label for="password2"  id="passwd2label" >Repeat Password:</label><br>
-        <input type="password" id="password2" name="password2" onblur="checkifpasswordsmatching()" required><button type="button" id="showpasswd2" onclick="showpasswd(2)">Show</button><br><br>
-        <button type="submit" id="registerbutton">Register</button>
+        <input type="password" id="password2" name="password2" onblur="checkifpasswordsmatching(), disablebutton()" required><button type="button" id="showpasswd2" onclick="showpasswd(2)">Show</button><br><br>
+        <button type="submit" id="registerbutton" disabled>Register</button>
     </form>
     <a href="/index.html">Back to Home</a>
 </body>
 <script>
+    var data;
     var usernameinput = document.getElementById('username');
     var usernamestatuslabel = document.getElementById('usernamestatuslabel');
     var passwd1Visible = false; // Zmienna do śledzenia widoczności hasła
     var passwd2Visible = false; // Zmienna do śledzenia widoczności powtórzonego hasła
+    var passwd1 = document.getElementById('password')
+    var passwd2 = document.getElementById('password2')
+    var sendbutton = document.getElementById('registerbutton')
+    var passwd1label = document.getElementById('passwd1label')
+    var passwd2label = document.getElementById('passwd2label')
     // sprawdzanie przed rejestracją czy taki użytkownik już istnieje
     async function checkifuserexists(){
     try {
@@ -44,7 +50,7 @@
             throw new Error(`Błąd serwera: ${response.status}`);
         }
 
-        var data = await response.json();
+        data = await response.json();
         
     } catch (error) {
         console.error("Błąd w trakcie sprawdzania użytkownika:", error);
@@ -62,23 +68,20 @@
         usernamestatuslabel.innerHTML = 'You can use this username! :D';
         document.getElementById('usernamelabel').innerHTML = 'Username:';
     }
+    
     }
     // sprawdzanie czy użytkownik podał 2 razy to samo hasło
     function checkifpasswordsmatching(){
-        var passwd1 = document.getElementById('password')
-        var passwd2 = document.getElementById('password2')
-        var sendbutton = document.getElementById('registerbutton')
-        var passwd1label = document.getElementById('passwd1label')
-        var passwd2label = document.getElementById('passwd2label')
+        
         if((passwd1.value == passwd2.value) && (passwd1.value !== "") && (passwd2.value !=="")){
-            sendbutton.disabled = false;
+           
             passwd1.style.backgroundColor = 'green';
             passwd2.style.backgroundColor = 'green';
             passwd1label.innerHTML = "Password:";
             passwd2label.innerHTML = "Password:";
         }
         if (passwd1.value !== passwd2.value){
-            sendbutton.disabled = true;
+            
             passwd1label.innerHTML = "Passwords don't match";
             passwd2label.innerHTML = "Passwords don't match";
             passwd1.style.backgroundColor = 'red';
@@ -89,6 +92,16 @@
             passwd2.style.backgroundColor = 'red';
             passwd1label.innerHTML = "Enter password";
             passwd2label.innerHTML = "Repeat password";
+        }
+        
+    }   
+    function disablebutton(){
+        
+        if((data.goodlength == true) && (data.exists == false) && (passwd1.value !== "") && (passwd2.value !=="") && (passwd1.value == passwd2.value)){
+            
+            sendbutton.disabled = false;
+        }else{
+            sendbutton.disabled = true;
         }
     }
     function showpasswd(passwdnr) {

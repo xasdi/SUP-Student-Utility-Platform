@@ -137,7 +137,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
         // Usunięcie pliku z katalogu 'uploads' po zapisaniu go w bazie
         fs.unlinkSync(file.path);
 
-        res.send('File uploaded and stored in database.');
+        res.redirect('/upload.html')
     });
 });
 
@@ -198,7 +198,7 @@ app.get('/delete/:id', isAuthenticated , (req, res) => {
             return res.status(404).send('File not found');
         }
 
-        res.send('usunieto plik xd')
+        res.redirect('/upload.html')
         
     });
 });

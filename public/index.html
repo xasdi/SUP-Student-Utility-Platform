@@ -4,12 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zsge Drive</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body, html{
+            margin: 0;
+            padding: 0;
+        }
+        a{
+            text-decoration: none;
+        }
+        li{
+            border-radius: 5px;
+            background-color: lightgray;
+            margin: 5px;
+            
+        }
+        li:hover{
+            background-color: darkgray;
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            right: -250px; /* Zaczyna poza ekranem po prawej stronie */
+            width: 250px;
+            height: 100%;
+            background-color: #343a40; /* Kolor tła */
+            transition: right 0.3s; /* Animacja wysuwania */
+            z-index: 1000; /* Ustawia panel nad innymi elementami */
+        }
+
+        #sidebar.active {
+            right: 0; /* Ustawia pozycję na ekranie */
+        }
+
+        .sidebar-link {
+            color: white; /* Kolor tekstu */
+        }
+
+        #overlay {
+            display: none; /* Ukrywa overlay na początku */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Przezroczysty czarny */
+            z-index: 900; /* Ustawia overlay pod panelem */
+        }
+    </style>
 </head>
-<body>
-    <h1>Zsge Drive</h1>
-    <a href="/register.html">Register</a> | 
-    <a href="/login.html">Login</a> | 
-    <a href="/dashboard.html">Dashboard</a> | <!-- Ochronione -->
-    <a href="/upload.html">Prześlij</a> |
+<body onload="checkLoginStatus()">
+    
+    <div id="overlay"></div>
+
+    <div id="sidebar">
+        <div class="d-flex justify-content-between align-items-center p-3">
+            <h3 class="text-white">User img here</h3>
+            <button id="closeSidebar" class="btn btn-light btn-sm">&times;</button> <!-- Przyciski zamykające -->
+        </div>
+        <ul class="list-unstyled" id="dropdown-menu">
+            
+        </ul>
+    </div>
+
+    <div class="header" style="padding: 20px; display:flex; justify-content: right; align-items:center">
+        
+        <button id="toggleSidebar" class="btn btn-primary">Menu</button>
+        
+    </div>
+
+
+    <h1>ZSGE Drive</h1>
+    
+    
 </body>
+<script> //sidebar complete
+    // Funkcja do sprawdzenia, czy użytkownik jest zalogowany
+    function checkLoginStatus() {
+        // Możesz użyć fetch do pobrania informacji o sesji użytkownika
+        fetch('/session-status') // Endpoint do sprawdzenia statusu sesji
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Not logged in');
+                }
+            })
+            .then(data => {
+                const dropdownMenu = document.getElementById('dropdown-menu');
+                
+
+                if (data.loggedIn) {
+                    // Jeśli użytkownik jest zalogowany
+                    dropdownMenu.innerHTML += `
+                        <li>Zalogowano jako ${data.username}</li>
+                        <a class="sidebar-link p-2" href="/dashboard.html"><li>Dashboard</li></a>
+                        <a class="sidebar-link p-2" href="/upload.html"> <li>Upload Files</li></a>
+                        <hr>
+                        <a class="sidebar-link p-2" href="/logout"> <li>Logout</li></a>
+                    `;
+                } else {
+                    // Jeśli użytkownik nie jest zalogowany
+                    dropdownMenu.innerHTML += `
+                        <li style='color: white'>Login to unlock all features</li>
+                        <hr>
+                        <a class="sidebar-link p-2" href="/login"> <li>Login</li></a>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+     // Obsługa kliknięcia w przycisk Menu
+     document.getElementById('toggleSidebar').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.toggle('active'); // Przełączanie klasy
+        overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none'; // Pokazanie lub ukrycie overlay
+    });
+
+    // Obsługa kliknięcia w przycisk zamknięcia
+    document.getElementById('closeSidebar').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.remove('active'); // Usunięcie klasy aktywnej
+        overlay.style.display = 'none'; // Ukrycie overlay
+    });
+
+    // Obsługa kliknięcia poza panelem
+    document.getElementById('overlay').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.remove('active'); // Usunięcie klasy aktywnej
+        overlay.style.display = 'none'; // Ukrycie overlay
+    });
+    // Wywołaj funkcję przy załadowaniu strony
+    window.onload = checkLoginStatus;
+</script>
 </html>

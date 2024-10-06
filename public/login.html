@@ -4,16 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>Login</h1><br>
     <form action="/login" method="POST">
         <label for="username">Username:</label><br>
         <input type="text" id="username" name="username" required><br>
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br><br>
         <button type="submit">Login</button>
-    </form>
+    </form><br>
+    <a href="/register.html">No account? Register here...</a><br>
     <a href="/index.html">Back to Home</a>
 </body>
 </html>

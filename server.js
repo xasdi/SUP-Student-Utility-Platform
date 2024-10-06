@@ -42,6 +42,7 @@ app.post('/doesuserexist', (req, res) => {
 
 // Rejestracja użytkownika
 app.post('/register', (req, res) => {
+
     const { username, password } = req.body; //zdefiniuj 2 zmienne i ustaw ich wartości na dane przekazane w pliku json
     
     const sql = 'SELECT * FROM users WHERE username = ?';
@@ -86,7 +87,7 @@ app.post('/login', (req, res) => {
             if (isMatch) {
                
                 req.session.user = { id: user.id, username: user.username };
-                res.redirect('/dashboard.html');
+                res.redirect('/index.html');
             } else {
                 res.status(400).send('Incorrect password');
             }
@@ -94,6 +95,17 @@ app.post('/login', (req, res) => {
     });
 });
 
+// endpoint do uwierzytelniania zalogowania użytkownika w celach wizualno / użytkowych
+app.get('/session-status', (req, res) => {
+    // Sprawdzamy, czy użytkownik jest zalogowany
+    if (req.session.user) {
+        // Jeśli tak, zwracamy status oraz nazwę użytkownika
+        return res.json({ loggedIn: true, username: req.session.user.username });
+    } else {
+        // Jeśli nie, zwracamy status niezalogowany
+        return res.json({ loggedIn: false });
+    }
+});
 
 
 // Middleware sprawdzający, czy użytkownik jest zalogowany, rzeczy nie wymagające zalogowania dawać nad ^ a te wymagające logowania pod v
@@ -106,6 +118,8 @@ const isAuthenticated = (req, res, next) => {
         res.redirect('/login.html'); // Przekierowanie na stronę logowania, jeśli niezalogowany
     }
 };
+
+
 
 // Serwowanie plików statycznych (HTML)
 app.use(express.static('public'));
@@ -130,7 +144,7 @@ app.get('/logout', (req, res) => {
         if (err) {
             return res.status(500).send('Error during logout');
         }
-        res.redirect('/login.html');
+        res.redirect('/index.html');
     });
 });
 

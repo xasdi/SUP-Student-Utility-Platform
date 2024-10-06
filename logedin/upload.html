@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body onload="getdata()">
     <h1>Upload a File</h1>
@@ -23,7 +31,7 @@
     
 
 </body>
-<script>
+<script>//upload funkcjonalność
     async function getdata() {
 
         let responseuserfiledata = await fetch("/getfiles", {

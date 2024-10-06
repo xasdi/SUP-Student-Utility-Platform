@@ -97,10 +97,12 @@ app.post('/login', (req, res) => {
 
 // endpoint do uwierzytelniania zalogowania użytkownika w celach wizualno / użytkowych
 app.get('/session-status', (req, res) => {
-    const user = req.body.user;
+    // Sprawdzamy, czy użytkownik jest zalogowany
     if (req.session.user) {
-        return res.json({ loggedIn: true, username: user });
+        // Jeśli tak, zwracamy status oraz nazwę użytkownika
+        return res.json({ loggedIn: true, username: req.session.user.username });
     } else {
+        // Jeśli nie, zwracamy status niezalogowany
         return res.json({ loggedIn: false });
     }
 });

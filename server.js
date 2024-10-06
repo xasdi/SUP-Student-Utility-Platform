@@ -12,6 +12,7 @@ const app = express();
 // Middleware do obsługi POST requestów
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.json());
 // Konfiguracja sesji
 app.use(session({
     secret: 'mysecret',
@@ -20,20 +21,51 @@ app.use(session({
     cookie: { secure: false }  // secure: true dla HTTPS
 }));
 
+app.post('/doesuserexist', (req, res) => {
+    const usernametocheck = req.body.usernametocheck;
+    if (usernametocheck == ''){
+        const goodlength = false
+        res.json({ goodlength })
+    }if(usernametocheck !== ''){
+        const sql = 'SELECT * FROM users WHERE username = ?';
+    db.query(sql, [usernametocheck], (err, result) => {
+        if (err) throw err;
+
+        // Check if user exists
+        const exists = result.length > 0;
+        const goodlength = true
+        res.json({ exists, goodlength });
+    });
+    }
+    
+});
+
 // Rejestracja użytkownika
 app.post('/register', (req, res) => {
     console.log('/register dziala');
     const { username, password } = req.body;
-
-    bcrypt.hash(password, 10, (err, hash) => {
+    
+    const sql = 'SELECT * FROM users WHERE username = ?';
+    db.query(sql, [username], (err, result) => {
         if (err) throw err;
-        
-        const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
-        db.query(sql, [username, hash], (err, result) => {
-            if (err) throw err;
-            res.redirect('/login.html'); // Po rejestracji przekierowujemy do logowania
-        });
+
+        // Check if user exists
+        const exists = result.length > 0;
+        if(exists){
+            res.send('Użytkownik już istnieje cwelu')
+          }else if(exists == false){
+            bcrypt.hash(password, 10, (err, hash) => {
+                if (err) throw err;
+                
+                const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
+                db.query(sql, [username, hash], (err, result) => {
+                    if (err) throw err;
+                    res.redirect('/login.html'); // Po rejestracji przekierowujemy do logowania
+                });
+            });
+        } 
     });
+      
 });
 
 app.post('/login', (req, res) => {
@@ -63,7 +95,9 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Middleware sprawdzający, czy użytkownik jest zalogowany
+
+
+// Middleware sprawdzający, czy użytkownik jest zalogowany, rzeczy nie wymagające zalogowania dawać nad ^ a te wymagające logowania pod v
 const isAuthenticated = (req, res, next) => {
    
     if (req.session.user) {
@@ -78,10 +112,6 @@ const isAuthenticated = (req, res, next) => {
 app.use(express.static('public'));
 app.use(isAuthenticated, express.static('logedin'));
 
-
-
-
-
 // Konfiguracja połączenia z bazą danych MySQL
 const db = mysql.createConnection({
     host: 'localhost',
@@ -95,13 +125,6 @@ db.connect((err) => {
     console.log('Connected to MySQL');
 });
 
-
-
-
-
-
-
-
 // Wylogowanie użytkownika
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
@@ -114,11 +137,6 @@ app.get('/logout', (req, res) => {
 
 // Konfiguracja multer do przesyłania plików
 const upload = multer({ dest: 'uploads/' }); // Pliki będą tymczasowo zapisywane w katalogu 'uploads/'
-
-
-
-
-
 
 // Upload pliku i zapis do bazy danych
 app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
@@ -159,8 +177,6 @@ app.get('/getfiles', isAuthenticated, (req, res) => {
     });
 })
 
-
-
 // Pobieranie pliku z bazy danych
 app.get('/download/:id', isAuthenticated, (req, res) => {
     const fileId = req.params.id;
@@ -183,8 +199,6 @@ app.get('/download/:id', isAuthenticated, (req, res) => {
     });
 });
 
-
-
 app.get('/delete/:id', isAuthenticated , (req, res) => {
     const deletefileId = req.params.id;
     const owner = req.session.user.username;
@@ -201,6 +215,25 @@ app.get('/delete/:id', isAuthenticated , (req, res) => {
         res.redirect('/upload.html')
         
     });
+});
+
+app.post('/doesuserexist', (req, res) => {
+    const usernametocheck = req.body.usernametocheck;
+    
+    const sql = 'SELECT * FROM users WHERE username = ?';
+    db.query(sql, [usernametocheck], (err, result) => {
+        if (err) throw err;
+
+        // Check if user exists
+        const exists = result.length > 0;
+        res.json({ exists });
+    });
+});
+
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 
 // Serwer startuje na porcie 3000

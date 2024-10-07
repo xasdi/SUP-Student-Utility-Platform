@@ -155,19 +155,20 @@ app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
     
     const file = req.file;
     const owner = req.session.user.username;
+    const uploadDate = new Date(); // Pobranie bieżącej daty i godziny
 
     // Odczyt pliku z systemu plików
     const fileData = fs.readFileSync(file.path);
 
-    // Zapytanie do bazy danych, które zapisze plik jako BLOB
-    const sql = 'INSERT INTO files (filename, file_data, file_owner) VALUES (?, ?, ?)';
-    db.query(sql, [file.originalname, fileData, owner], (err, result) => {
+    // Zapytanie do bazy danych, które zapisze plik jako BLOB z datą przesłania
+    const sql = 'INSERT INTO files (filename, file_data, file_owner, upload_date) VALUES (?, ?, ?, ?)';
+    db.query(sql, [file.originalname, fileData, owner, uploadDate], (err, result) => {
         if (err) throw err;
 
         // Usunięcie pliku z katalogu 'uploads' po zapisaniu go w bazie
         fs.unlinkSync(file.path);
 
-        res.redirect('/upload.html')
+        res.redirect('/upload.html');
     });
 });
 
@@ -175,19 +176,24 @@ app.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
 
 app.get('/getfiles', isAuthenticated, (req, res) => {
     const fileowner = req.session.user.username;
-    const sql = 'SELECT id, filename FROM files WHERE file_owner = ?';
+
+    // Uaktualnione zapytanie SQL o dodatkowe kolumny
+    const sql = 'SELECT id, filename, file_data, LENGTH(file_data) AS file_size, upload_date FROM files WHERE file_owner = ?';
+    
     db.query(sql, [fileowner], (err, result) => {
-        if (err) throw err;
+        if (err) {
+            console.error(err); // Dobrą praktyką jest logowanie błędów
+            return res.status(500).send('Internal Server Error');
+        }
 
         if (result.length === 0) {
             return res.status(404).send('No files found');
         }
 
-       
-        res.json(result);
-        
+        res.json(result); // Zwraca wynik, który teraz zawiera file_size oraz upload_date
     });
-})
+});
+
 
 // Pobieranie pliku z bazy danych
 app.get('/download/:id', isAuthenticated, (req, res) => {

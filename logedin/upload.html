@@ -4,99 +4,300 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
    
     <style>
-        body{
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #444;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer; /* Add pointer cursor for headers */
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            position: relative; /* Position relative for absolute icons */
+        }
+
+        .sort-icon {
+            position: absolute;
+            right: 10px; /* Adjust to your needs */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em; /* Adjust icon size */
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .actions button {
+            background-color: #28a745;
+            margin-right: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .actions button.delete {
+            background-color: #dc3545;
+        }
+
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            form, table {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .actions button {
+                margin-right: 5px;
+            }
         }
     </style>
 </head>
 <body onload="getdata()">
     <h1>Upload a File</h1>
     <form action="/upload" method="POST" enctype="multipart/form-data">
-        <label for="file">Choose file:</label><br>
-        <input type="file" id="file" name="file" required><br><br>
+        <label for="file">Choose file:</label>
+        <input type="file" id="file" name="file" required>
         <button type="submit">Upload</button>
-        
-    </form></br></br>
-    <button onclick="getdata()">Zasys</button>
-    <br>
-    Twoje zapisane pliki: <br>
-    <p name="storedfilestable">...</p>
+    </form>
+    <br><br>
+    <label for="search">Search by file name:</label>
+    <input type="text" id="search" onkeyup="filterTable()" placeholder="Type your filename here...">
+
     <table id="fileTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable('filename')">Filename <i class="fas fa-sort sort-icon" id="filenameSortIcon"></i></th>
+                <th onclick="sortTable('size')">Size (KB) <i class="fas fa-sort sort-icon" id="sizeSortIcon"></i></th>
+                <th onclick="sortTable('date')">Date Uploaded <i class="fas fa-sort sort-icon" id="dateSortIcon"></i></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
         <tbody></tbody>
     </table>
-    
 
 </body>
-<script>//upload funkcjonalność
-    async function getdata() {
 
+<script>
+    let currentSort = { field: '', direction: 'asc' }; // Track the current sort field and direction
+
+    async function getdata() {
         let responseuserfiledata = await fetch("/getfiles", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
         });
-        console.log(responseuserfiledata);
-        responseuserfiledata = await responseuserfiledata.json()
-        
-            console.log(responseuserfiledata);
-        function populateTable(responseuserfiledata) {
-            const tableBody = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = '';
+        responseuserfiledata = await responseuserfiledata.json();
 
-            responseuserfiledata.forEach(item => {
-                const row = document.createElement('tr');
+        // Default sorting by name when fetching data
+        responseuserfiledata.sort((a, b) => a.filename.localeCompare(b.filename));
 
-                // Komórka ID
-                const idCell = document.createElement('td');
-                idCell.textContent = item.id;
-                row.appendChild(idCell);
+        populateTable(responseuserfiledata);
+    }
 
-                // Komórka Filename
-                const filenameCell = document.createElement('td');
-                filenameCell.textContent = item.filename;
-                row.appendChild(filenameCell);
+    function populateTable(fileData) {
+        const tableBody = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Clear the table
 
-                // Komórka Download button
-                const downloadCell = document.createElement('td');
-                const downloadButton = document.createElement('button');
-                downloadButton.textContent = 'Download';
-                downloadButton.onclick = () => {
-                    window.location.href = `/download/${item.id}`;
-                };
+        fileData.forEach(item => {
+            const row = document.createElement('tr');
 
-                // Komórka Download button
-                const deleteCell = document.createElement('td');
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete File';
-                deleteButton.onclick = () => {
-                    //req do endpoint /delete aby usunął dany plik
-                    window.location.href = `/delete/${item.id}`;
-                   
-                };
+            // Filename Cell
+            const filenameCell = document.createElement('td');
+            filenameCell.textContent = item.filename;
+            row.appendChild(filenameCell);
 
+            // File Size Cell
+            const sizeCell = document.createElement('td');
+            sizeCell.textContent = item.file_size; // Display file size
+            row.appendChild(sizeCell);
 
+            // Date Uploaded Cell
+            const dateCell = document.createElement('td');
+            dateCell.textContent = new Date(item.upload_date).toLocaleString(); // Format date
+            row.appendChild(dateCell);
 
+            // Action Cells (Download and Delete buttons)
+            const actionCell = document.createElement('td');
+            const downloadButton = document.createElement('button');
+            downloadButton.innerHTML = '<i class="fas fa-download"></i>';
+            downloadButton.onclick = () => window.location.href = `/download/${item.id}`;
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.classList.add('delete');
+            deleteButton.onclick = () => window.location.href = `/delete/${item.id}`;
 
-                
-                downloadCell.appendChild(downloadButton);
-                row.appendChild(downloadCell);
-                deleteCell.appendChild(deleteButton);
-                row.appendChild(deleteCell)
+            actionCell.appendChild(downloadButton);
+            actionCell.appendChild(deleteButton);
+            actionCell.classList.add('actions');
+            row.appendChild(actionCell);
 
-                tableBody.appendChild(row);
-                
-            });
+            tableBody.appendChild(row);
+        });
+    }
+
+    function sortTable(field) {
+        const tableBody = document.getElementById('fileTable').getElementsByTagName('tbody')[0];
+        const rows = Array.from(tableBody.getElementsByTagName('tr'));
+
+        // Determine direction for sorting
+        if (currentSort.field === field) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc'; // Toggle direction
+        } else {
+            currentSort.field = field;
+            currentSort.direction = 'asc'; // Default to ascending
         }
 
-        // Wywołanie funkcji
-        populateTable(responseuserfiledata);
-        
+        // Sort rows based on the selected field
+        rows.sort((a, b) => {
+            let aValue, bValue;
+            switch (field) {
+                case 'filename':
+                    aValue = a.cells[0].textContent;
+                    bValue = b.cells[0].textContent;
+                    break;
+                case 'size':
+                    aValue = parseInt(a.cells[1].textContent);
+                    bValue = parseInt(b.cells[1].textContent);
+                    break;
+                case 'date':
+                    aValue = new Date(a.cells[2].textContent);
+                    bValue = new Date(b.cells[2].textContent);
+                    break;
+                default:
+                    return 0;
+            }
+            return currentSort.direction === 'asc' ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
+        });
+
+        // Append sorted rows to the table body
+        rows.forEach(row => tableBody.appendChild(row));
+
+        // Update the sort icons
+        updateSortIcons(field);
+    }
+
+    function updateSortIcons(field) {
+        const icons = {
+            filename: document.getElementById('filenameSortIcon'),
+            size: document.getElementById('sizeSortIcon'),
+            date: document.getElementById('dateSortIcon'),
+        };
+
+        // Reset all icons
+        for (const key in icons) {
+            icons[key].classList.remove('fa-sort-up', 'fa-sort-down');
+            icons[key].classList.add('fa-sort');
+        }
+
+        // Update the current field icon
+        if (currentSort.field) {
+            icons[currentSort.field].classList.remove('fa-sort');
+            icons[currentSort.field].classList.add(currentSort.direction === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+        }
+    }
+
+    function filterTable() {
+        const input = document.getElementById('search').value.toLowerCase();
+        const rows = document.querySelectorAll('#fileTable tbody tr');
+
+        rows.forEach(row => {
+            const filename = row.cells[0].textContent.toLowerCase();
+            row.style.display = filename.includes(input) ? '' : 'none';
+        });
     }
 </script>
 </html>

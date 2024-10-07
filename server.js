@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-
 const app = express();
 
 // Middleware do obsługi POST requestów
@@ -230,18 +229,6 @@ app.get('/delete/:id', isAuthenticated , (req, res) => {
     });
 });
 
-app.post('/doesuserexist', (req, res) => {
-    const usernametocheck = req.body.usernametocheck;
-    
-    const sql = 'SELECT * FROM users WHERE username = ?';
-    db.query(sql, [usernametocheck], (err, result) => {
-        if (err) throw err;
-
-        // Check if user exists
-        const exists = result.length > 0;
-        res.json({ exists });
-    });
-});
 
 
 app.use((err, req, res, next) => {

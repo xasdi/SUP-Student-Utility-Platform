@@ -4,132 +4,200 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    
     <style>
-        body{
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            height: 100vh;
+            background-color: #f8f9fa; /* Light background color */
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #007BFF; /* Primary color */
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ced4da; /* Light border */
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF; /* Change border color on focus */
+        }
+        .input-group {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+        }
+        #usernamestatuslabel {
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .status-good {
+            color: green;
+        }
+        .status-bad {
+            color: red;
         }
     </style>
 </head>
 <body>
     <h1>Register</h1>
     <form action="/register" method="POST">
-        <label for="username" id="usernamelabel">Username:</label><br>
-        <input type="text" id="username" name="username" onblur="checkifuserexists(), disablebutton()" autocomplete="off" required><label id="usernamestatuslabel"></label><br>
-        <label for="password"  id="passwd1label" >Password:</label><br>
-        <input type="password"  id="password" name="password" onblur="checkifpasswordsmatching(), disablebutton()" required><button type="button" id="showpasswd1" onclick="showpasswd(1)">Show</button><br>
-        <label for="password2"  id="passwd2label" >Repeat Password:</label><br>
-        <input type="password" id="password2" name="password2" onblur="checkifpasswordsmatching(), disablebutton()" required><button type="button" id="showpasswd2" onclick="showpasswd(2)">Show</button><br><br>
-        <button type="submit" id="registerbutton" disabled>Register</button>
+        <label for="username" id="usernamelabel">Username:</label>
+        <input type="text" id="username" name="username" onblur="checkifuserexists(); disablebutton()" minlength="3" autocomplete="off" required>
+        <label id="usernamestatuslabel"></label><br>
+        
+        <label for="password" id="passwd1label">Password:</label>
+        <div class="input-group">
+            <input type="password" id="password" name="password" onblur="checkifpasswordsmatching(); disablebutton()" minlength="8" required>
+            <i class="toggle-password fas fa-eye" id="showpasswd1" onclick="showpasswd(1)"></i>
+        </div>
+        
+        <label for="password2" id="passwd2label">Repeat Password:</label>
+        <div class="input-group">
+            <input type="password" id="password2" name="password2" onblur="checkifpasswordsmatching(); disablebutton()" minlength="8" required>
+            <i class="toggle-password fas fa-eye" id="showpasswd2" onclick="showpasswd(2)"></i>
+        </div>
+        
+        <button type="submit" id="registerbutton" class="btn btn-primary" disabled>Register</button>
     </form>
-    <a href="/index.html">Back to Home</a>
-</body>
-<script>
-    var data;
-    var usernameinput = document.getElementById('username');
-    var usernamestatuslabel = document.getElementById('usernamestatuslabel');
-    var passwd1Visible = false; // Zmienna do śledzenia widoczności hasła
-    var passwd2Visible = false; // Zmienna do śledzenia widoczności powtórzonego hasła
-    var passwd1 = document.getElementById('password')
-    var passwd2 = document.getElementById('password2')
-    var sendbutton = document.getElementById('registerbutton')
-    var passwd1label = document.getElementById('passwd1label')
-    var passwd2label = document.getElementById('passwd2label')
-    document.body.addEventListener('click', checkifpasswordsmatching(), disablebutton())
-    // sprawdzanie przed rejestracją czy taki użytkownik już istnieje
-    async function checkifuserexists(){
+    <a href="/index.html" class="mt-3">Back to Home</a>
+
+    <script>
+        var data;
+        var usernameinput = document.getElementById('username');
+        var usernamestatuslabel = document.getElementById('usernamestatuslabel');
+        var passwd1Visible = false; // Track visibility of password
+        var passwd2Visible = false; // Track visibility of repeated password
+        var passwd1 = document.getElementById('password');
+        var passwd2 = document.getElementById('password2');
+        var sendbutton = document.getElementById('registerbutton');
+        var passwd1label = document.getElementById('passwd1label');
+        var passwd2label = document.getElementById('passwd2label');
+
+        async function checkifuserexists() {
     try {
         let response = await fetch("/doesuserexist", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                
-                usernametocheck : usernameinput.value
-                
-            })
-            
+            body: JSON.stringify({ usernametocheck: usernameinput.value })
         });
-       
 
         if (!response.ok) {
-            throw new Error(`Błąd serwera: ${response.status}`);
+            throw new Error(`Server error: ${response.status}`);
         }
 
         data = await response.json();
         
+        // Check username length
+        if (usernameinput.value.length < 3) { // Assuming minimum length is 3
+            document.getElementById('usernamelabel').innerHTML = 'Username too short';
+            usernameinput.style.backgroundColor = 'red';
+            usernamestatuslabel.innerHTML = ''; // Clear previous messages
+            return;
+        }
+
+        if (data.exists) {
+            usernameinput.style.backgroundColor = 'red';
+            usernamestatuslabel.innerHTML = 'This username is already in use...';
+            usernamestatuslabel.className = 'status-bad';
+        } else {
+            usernameinput.style.backgroundColor = 'green';
+            usernamestatuslabel.innerHTML = 'You can use this username! :D';
+            usernamestatuslabel.className = 'status-good';
+            document.getElementById('usernamelabel').innerHTML = 'Username:';
+        }
+        
     } catch (error) {
-        console.error("Błąd w trakcie sprawdzania użytkownika:", error);
+        console.error("Error checking user:", error);
     }
-    if(data.goodlength == false){
-        document.getElementById('usernamelabel').innerHTML = 'Username too short';
-        usernameinput.style.backgroundColor = 'red';
+}
+
+function checkifpasswordsmatching() {
+    const minPasswordLength = 8; // Set your minimum password length
+
+    if (passwd1.value.length < minPasswordLength) {
+        passwd1label.innerHTML = `Password must be at least ${minPasswordLength} characters long.`;
+        passwd1.style.backgroundColor = 'red';
+        passwd2.style.backgroundColor = 'red';
+        return;
     }
 
-    if(data.exists == true){
-        usernameinput.style.backgroundColor = 'red';
-        usernamestatuslabel.innerHTML = 'This username is already in use...';
-    }else if (data.exists == false){
-        usernameinput.style.backgroundColor = 'green';
-        usernamestatuslabel.innerHTML = 'You can use this username! :D';
-        document.getElementById('usernamelabel').innerHTML = 'Username:';
+    if (passwd2.value.length < minPasswordLength) {
+        passwd2label.innerHTML = `Password must be at least ${minPasswordLength} characters long.`;
+        passwd1.style.backgroundColor = 'red';
+        passwd2.style.backgroundColor = 'red';
+        return;
     }
-    
-    }
-    // sprawdzanie czy użytkownik podał 2 razy to samo hasło
-    function checkifpasswordsmatching(){
-        
-        if((passwd1.value == passwd2.value) && (passwd1.value !== "") && (passwd2.value !=="")){
-           
-            passwd1.style.backgroundColor = 'green';
-            passwd2.style.backgroundColor = 'green';
-            passwd1label.innerHTML = "Password:";
-            passwd2label.innerHTML = "Password:";
-        }
-        if (passwd1.value !== passwd2.value){
-            
-            passwd1label.innerHTML = "Passwords don't match";
-            passwd2label.innerHTML = "Passwords don't match";
-            passwd1.style.backgroundColor = 'red';
-            passwd2.style.backgroundColor = 'red';
-        }
-        if ((passwd1.value == "") && (passwd2.value == "")){
-            passwd1.style.backgroundColor = 'red';
-            passwd2.style.backgroundColor = 'red';
-            passwd1label.innerHTML = "Enter password";
-            passwd2label.innerHTML = "Repeat password";
-        }
-        
-    }   
-    function disablebutton(){
-        
-        if((data.goodlength == true) && (data.exists == false) && (passwd1.value !== "") && (passwd2.value !=="") && (passwd1.value == passwd2.value)){
-            
-            sendbutton.disabled = false;
-        }else{
-            sendbutton.disabled = true;
-        }
-    }
-    function showpasswd(passwdnr) {
-        var passwd1 = document.getElementById('password');
-        var passwd2 = document.getElementById('password2');
-        var show1 = document.getElementById('showpasswd1');
-        var show2 = document.getElementById('showpasswd2');
 
-        if (passwdnr == 1) {
-            passwd1.type = passwd1Visible ? 'password' : 'text';
-            show1.innerHTML = passwd1Visible ? 'Pokaż' : 'Ukryj';
-            passwd1Visible = !passwd1Visible; // Zmień stan widoczności
+    if (passwd1.value === passwd2.value && passwd1.value !== "" && passwd2.value !== "") {
+        passwd1.style.backgroundColor = 'green';
+        passwd2.style.backgroundColor = 'green';
+        passwd1label.innerHTML = "Password:";
+        passwd2label.innerHTML = "Password:";
+    } else if (passwd1.value !== passwd2.value) {
+        passwd1label.innerHTML = "Passwords don't match";
+        passwd2label.innerHTML = "Passwords don't match";
+        passwd1.style.backgroundColor = 'red';
+        passwd2.style.backgroundColor = 'red';
+    } else {
+        passwd1.style.backgroundColor = 'red';
+        passwd2.style.backgroundColor = 'red';
+        passwd1label.innerHTML = "Enter password";
+        passwd2label.innerHTML = "Repeat password";
+    }
+}
+
+        function disablebutton() {
+            if (data?.goodlength && !data.exists && passwd1.value !== "" && passwd2.value !== "" && passwd1.value === passwd2.value) {
+                sendbutton.disabled = false;
+            } else {
+                sendbutton.disabled = true;
+            }
         }
 
-        if (passwdnr == 2) {
-            passwd2.type = passwd2Visible ? 'password' : 'text';
-            show2.innerHTML = passwd2Visible ? 'Pokaż' : 'Ukryj';
-            passwd2Visible = !passwd2Visible; // Zmień stan widoczności
+        function showpasswd(passwdnr) {
+            if (passwdnr === 1) {
+                passwd1.type = passwd1Visible ? 'password' : 'text';
+                document.getElementById('showpasswd1').className = passwd1Visible ? 'toggle-password fas fa-eye' : 'toggle-password fas fa-eye-slash';
+                passwd1Visible = !passwd1Visible;
+            }
+
+            if (passwdnr === 2) {
+                passwd2.type = passwd2Visible ? 'password' : 'text';
+                document.getElementById('showpasswd2').className = passwd2Visible ? 'toggle-password fas fa-eye' : 'toggle-password fas fa-eye-slash';
+                passwd2Visible = !passwd2Visible;
+            }
         }
-    }
-</script>
+    </script>
+</body>
 </html>

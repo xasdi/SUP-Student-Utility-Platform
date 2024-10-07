@@ -37,6 +37,7 @@
     var sendbutton = document.getElementById('registerbutton')
     var passwd1label = document.getElementById('passwd1label')
     var passwd2label = document.getElementById('passwd2label')
+    document.body.addEventListener('click', checkifpasswordsmatching(), disablebutton())
     // sprawdzanie przed rejestracją czy taki użytkownik już istnieje
     async function checkifuserexists(){
     try {

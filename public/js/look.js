@@ -3,9 +3,15 @@ import 'https://code.jquery.com/jquery-3.5.1.slim.min.js';
 import 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js';
 import 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js';
 
+
+
 window.onload = function() {
     checkLoginStatus();
 };
+
+function loginredir(){
+    window.location.href = '/login.html';
+}
 
 // Funkcja do sprawdzenia, czy użytkownik jest zalogowany
 function checkLoginStatus() {
@@ -24,7 +30,7 @@ function checkLoginStatus() {
 
             if (data.loggedIn) {
                 // Jeśli użytkownik jest zalogowany
-                dropdownMenu.innerHTML += `
+                dropdownMenu.innerHTML = `
                     <li>Zalogowano jako ${data.username}</li>
                     <a class="sidebar-link p-2" href="/dashboard.html"><li>Dashboard</li></a>
                     <a class="sidebar-link p-2" href="/upload.html"> <li>Upload Files</li></a>
@@ -33,7 +39,7 @@ function checkLoginStatus() {
                 `;
             } else {
                 // Jeśli użytkownik nie jest zalogowany
-                dropdownMenu.innerHTML += `
+                dropdownMenu.innerHTML = `
                     <li style='color: white'>Login to unlock all features</li>
                     <hr>
                     <a class="sidebar-link p-2" href="/login"> <li>Login</li></a>
@@ -69,4 +75,7 @@ document.getElementById('overlay').addEventListener('click', function() {
     overlay.style.display = 'none'; // Ukrycie overlay
 });
 // Wywołaj funkcję przy załadowaniu strony
+
+
+
 window.onload = checkLoginStatus;

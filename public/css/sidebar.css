@@ -1,0 +1,44 @@
+
+
+#sidebar a{
+    text-decoration: none;
+}
+#sidebar li{
+    border-radius: 5px;
+    background-color: lightgray;
+    margin: 5px;
+    
+}
+#sidebar li:hover{
+    background-color: darkgray;
+}
+
+#sidebar{
+    position: fixed;
+    top: 0;
+    right: -250px; /* Zaczyna poza ekranem po prawej stronie */
+    width: 250px;
+    height: 100%;
+    background-color: #343a40; /* Kolor tła */
+    transition: right 0.3s; /* Animacja wysuwania */
+    z-index: 1000; /* Ustawia panel nad innymi elementami */
+}
+
+#sidebar.active {
+    right: 0; /* Ustawia pozycję na ekranie */
+}
+
+#sidebar .sidebar-link {
+    color: white; /* Kolor tekstu */
+}
+
+#overlay {
+    display: none; /* Ukrywa overlay na początku */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Przezroczysty czarny */
+    z-index: 900; /* Ustawia overlay pod panelem */
+}

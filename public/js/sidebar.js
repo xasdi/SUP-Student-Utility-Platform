@@ -9,9 +9,7 @@ window.onload = function() {
     checkLoginStatus();
 };
 
-function loginredir(){
-    window.location.href = '/login.html';
-}
+
 
 // Funkcja do sprawdzenia, czy użytkownik jest zalogowany
 function checkLoginStatus() {

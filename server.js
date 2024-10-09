@@ -51,7 +51,7 @@ app.post('/register', (req, res) => {
         // Check if user exists
         const exists = result.length > 0;
         if(exists){
-            res.send('Użytkownik już istnieje cwelu')
+            res.send('Użytkownik już istnieje gamoniu >:C')
           }else if(exists == false){
             bcrypt.hash(password, 10, (err, hash) => {
                 if (err) throw err;

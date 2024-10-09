@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/import.css">
     <link rel="stylesheet" href="/css/sidebar.css">
-
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -146,6 +146,22 @@
     </style>
 </head>
 <body onload="getdata()">
+    <div id="overlay"></div>
+
+<div id="sidebar">
+    <div class="d-flex justify-content-between align-items-center p-3">
+            <h3 class="text-white">User img here</h3>
+            <button id="closeSidebar" class="btn btn-light btn-sm">&times;</button> <!-- Przyciski zamykające -->
+    </div>
+    <ul class="list-unstyled" id="dropdown-menu">
+            
+    </ul>
+</div>
+
+<div class="header" style="padding: 20px; display:flex; justify-content: right; align-items:center">
+    <div id="loginmenubutton"><button id="toggleSidebar" class="btn btn-primary"><i class="fa-solid fa-bars"></i></button></div>
+</div>
+
     <h1>Upload a File</h1>
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <label for="file">Choose file:</label>
@@ -301,4 +317,5 @@
         });
     }
 </script>
+<script src="/js/sidebar.js" type="module"></script>
 </html>
